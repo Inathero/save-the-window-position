@@ -4,7 +4,9 @@
 int main(int argc, char *argv[])
 {
 
-//    QCoreApplication::addLibraryPath("./"); //this goddamn line right here
+    // If deployment says that windows platform isn't found despite plugins directory being in the correct location
+    // then uncommit the below line.
+    //QCoreApplication::addLibraryPath("./");
 
     QApplication a(argc, argv);
     MainWindow w;

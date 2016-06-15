@@ -1,18 +1,17 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <qt_windows.h>
-#include <QDebug>
 
-
-QHash<int , QPoint> WindowPositions;
+//Simple hash for window ID and position
+QHash<HWND , RECT> WindowPositions;
 
 BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam)
 {
     RECT lpRect;
     if(IsWindowVisible(hwnd)) {
         GetWindowRect(hwnd, &lpRect);
-        if(WindowPositions.value((int)hwnd, QPoint(-2,-2)).x() == -2)
-              WindowPositions.insert((int)hwnd, QPoint(lpRect.left, lpRect.top));
+        if(WindowPositions.value(hwnd, RECT(-2,-2,0,0)).left == -2)
+              WindowPositions.insert(hwnd, lpRect);
     }
     return TRUE;
 }
@@ -37,12 +36,13 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    QHash<int,QPoint>::const_iterator iter = WindowPositions.constBegin();
-    QHash<int,QPoint>::const_iterator end = WindowPositions.constEnd();
-    QHash<int,QPoint>::iterator i;
-        for (i = WindowPositions.begin(); i != WindowPositions.end(); ++i) {
-        QPoint wCoord = i.value();
-        HWND hwnd = (HWND)i.key();
-        SetWindowPos(hwnd , NULL, wCoord.x(), wCoord.y(), NULL, NULL, SWP_NOSIZE | SWP_NOZORDER);
+    QHash<HWND,QPoint>::const_iterator iter = WindowPositions.constBegin();
+    QHash<HWND,QPoint>::const_iterator end = WindowPositions.constEnd();
+    QHash<HWND,QPoint>::iterator i;
+
+    for (i = WindowPositions.begin(); i != WindowPositions.end(); ++i) {
+        RECT wCoord = i.value();
+        HWND hwnd = i.key();
+        SetWindowPos(hwnd , NULL, wCoord.left, wCoord.top, wCoord.right, wCoord.bottom, SWP_NOZORDER);
     }
 }
