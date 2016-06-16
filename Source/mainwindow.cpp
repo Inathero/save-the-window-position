@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 }
+
 // Deconstruct
 MainWindow::~MainWindow()
 {
@@ -41,14 +42,10 @@ void MainWindow::on_pushButton_getPositions_clicked()
 // Set window's positions
 void MainWindow::on_pushButton_setPositions_clicked()
 {
-    QHash<HWND,RECT>::const_iterator iter = WindowPositions.constBegin();
-    QHash<HWND,RECT>::const_iterator end = WindowPositions.constEnd();
     QHash<HWND,RECT>::iterator i;
-
 
     for (i = WindowPositions.begin(); i != WindowPositions.end(); ++i) {
         RECT wCoord = i.value();
-        HWND hwnd = i.key();
-        SetWindowPos(hwnd , NULL, wCoord.left, wCoord.top, wCoord.right-wCoord.left, wCoord.bottom-wCoord.top, SWP_NOZORDER);
+        SetWindowPos(i.key() , NULL, wCoord.left, wCoord.top, wCoord.right-wCoord.left, wCoord.bottom-wCoord.top, SWP_NOACTIVATE | SWP_NOOWNERZORDER);
     }
 }
